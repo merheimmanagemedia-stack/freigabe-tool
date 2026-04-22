@@ -1,4 +1,6 @@
 {
+  "name": "freigabe-tool",
+  "version": "1.0.0",
   "type": "module",
   "dependencies": {
     "resend": "latest"
