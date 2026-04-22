@@ -2,69 +2,71 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Mediaplan / Angebot freigeben</title>
+  <title>Freigabe</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       max-width: 600px;
-      margin: 50px auto;
-      line-height: 1.6;
+      margin: 40px auto;
+      text-align: center;
     }
     button {
-      padding: 12px 20px;
+      padding: 14px 24px;
       background-color: #0070f3;
-      border: none;
-      border-radius: 5px;
       color: white;
-      font-size: 16px;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
+      font-size: 16px;
     }
     button:hover {
       background-color: #0059c1;
     }
   </style>
 </head>
-
 <body>
 
-  <h2>Freigabe bestätigen</h2>
+  <h2>Freigabe</h2>
+  <p>Bitte bestätigen Sie die Freigabe des Angebots / Mediaplans.</p>
 
-  <p>
-    Bitte bestätigen Sie die bindende Freigabe des vorliegenden Mediaplans / Angebots.
-  </p>
+  <button id="freigebenButton">
+    Ich bestätige hiermit verbindlich die Freigabe des Mediaplans / Angebots.
+  </button>
 
- <button id="freigebenButton">
-  Ich bestätige hiermit verbindlich die Freigabe des Mediaplans / Angebots.
-</button>
+  <script>
+    document.getElementById("freigebenButton").addEventListener("click", async () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const customerEmail = urlParams.get("email");
+      const campaignName = urlParams.get("campaign") || "Nicht angegeben";
+      const budget = urlParams.get("budget") || "Nicht angegeben";
 
-<script>
-  document.getElementById("freigebenButton").addEventListener("click", async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const customerEmail = urlParams.get("email");
+      if (!customerEmail) {
+        alert("Fehler: Keine Kunden-E-Mail übergeben.");
+        return;
+      }
 
-    if (!customerEmail) {
-      alert("Fehler: Es wurde keine Kunden-E-Mail übergeben.");
-      return;
-    }
+      try {
+        const response = await fetch("/api/freigabe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customerEmail,
+            campaignName,
+            budget
+          })
+        });
 
-    // Optional: Kampagnendaten
-    const campaignName = urlParams.get("campaign") || "Nicht angegeben";
-    const budget = urlParams.get("budget") || "Nicht angegeben";
+        if (!response.ok) {
+          throw new Error("Serverfehler");
+        }
 
-    const response = await fetch("/api/freigabe", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        customerEmail,
-        campaignName,
-        budget
-      })
+        window.location.href = "freigabe-bestaetigt.html";
+
+      } catch (error) {
+        alert("Fehler beim Versenden der Freigabe.");
+      }
     });
+  </script>
 
-    if (response.ok) {
-      window.location.href = "freigabe-bestaetigt.html";
-    } else {
-      alert("Fehler beim Versenden der Freigabe.");
-    }
-  });
-</script>
+</body>
+</html>
