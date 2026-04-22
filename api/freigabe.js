@@ -11,29 +11,33 @@ export default async function handler(req, res) {
 
   try {
     // Interne E-Mail
-    await resend.emails.send({
-      from: 'noreply@managemedia.de',
-      to: process.env.INTERNAL_EMAIL,
-      subject: `Neue Freigabe erhalten`,
-      html: `
-        <h2>Neue Freigabe eingegangen</h2>
-        <p><strong>Kunden-E-Mail:</strong> ${customerEmail}</p>
-        <p><strong>Kampagne:</strong> ${campaignName}</p>
-        <p><strong>Budget:</strong> ${budget}</p>
-        <p>Die Freigabe wurde soeben bestätigt.</p>
-      `,
-    });
+   await resend.emails.send({
+  from: 'onboarding@resend.dev',
+  to: process.env.INTERNAL_EMAIL,
+  subject: `Neue Freigabe erhalten`,
+  html: `
+    <h2>Neue Freigabe eingegangen</h2>
+    <p><strong>Kunden-E-Mail:</strong> ${customerEmail}</p>
+    <p><strong>Kampagne:</strong> ${campaignName}</p>
+    <p><strong>Budget:</strong> ${budget}</p>
+    <p>Die Freigabe wurde soeben bestätigt.</p>
+  `,
+});
+
 
     // Kunden-E-Mail
-    await resend.emails.send({
-      from: 'noreply@managemedia.de',
-      to: customerEmail,
-      subject: `Bestätigung Ihrer Freigabe – Managemedia`,
-      html: `
-        <h2>Vielen Dank für Ihre Freigabe!</h2>
-        <p>Wir bestätigen den Eingang Ihrer verbindlichen Freigabe.</p>
-        <p><strong>Kampagne:</strong> ${campaignName}</p>
-        <p><strong>Budget:</strong> ${budget}</p>
+await resend.emails.send({
+  from: 'onboarding@resend.dev',
+  to: customerEmail,
+  subject: `Bestätigung Ihrer Freigabe – Managemedia`,
+  html: `
+    <h2>Vielen Dank für Ihre Freigabe!</h2>
+    <p>Wir bestätigen den Eingang Ihrer verbindlichen Freigabe.</p>
+    <p><strong>Kampagne:</strong> ${campaignName}</p>
+    <p><strong>Budget:</strong> ${budget}</p>
+  `
+});
+
         <p>Wir werden uns zeitnah bei Ihnen melden.</p>
       `
     });
