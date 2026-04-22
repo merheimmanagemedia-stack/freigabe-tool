@@ -1,15 +1,12 @@
 import { Resend } from 'resend';
 
-export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
-  }
-
-  const resend = new Resend(process.env.RESEND_API_KEY);
-
-  const { customerEmail, campaignName, budget } = req.body;
-
+export async function POST(req) {
   try {
+    const body = await req.json();
+    const { customerEmail, campaignName, budget } = body;
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
     // Interne E-Mail
     await resend.emails.send({
       from: "onboarding@resend.dev",
@@ -20,7 +17,6 @@ export default async function handler(req, res) {
         <p><strong>Kunden-E-Mail:</strong> ${customerEmail}</p>
         <p><strong>Kampagne:</strong> ${campaignName}</p>
         <p><strong>Budget:</strong> ${budget}</p>
-        <p>Die Freigabe wurde soeben bestätigt.</p>
       `
     });
 
@@ -28,18 +24,23 @@ export default async function handler(req, res) {
     await resend.emails.send({
       from: "onboarding@resend.dev",
       to: customerEmail,
-      subject: "Bestätigung Ihrer Freigabe – Managemedia",
+      subject: "Bestätigung Ihrer Freigabe – ManageMedia",
       html: `
-        <h2>Vielen Dank für Ihre Freigabe!</h2>
+        <h2>Vielen Dank für Ihre Freigabe</h2>
         <p>Wir bestätigen den Eingang Ihrer verbindlichen Freigabe.</p>
         <p><strong>Kampagne:</strong> ${campaignName}</p>
         <p><strong>Budget:</strong> ${budget}</p>
       `
     });
 
-    return res.status(200).json({ success: true });
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" }
+    });
 
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500
+    });
   }
 }
